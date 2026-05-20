@@ -9,8 +9,9 @@ import com.sbnz.model.enums.DerivedStatus;
 // Pravilo 1
 rule "Global Status - COLLECTOR_GRADE"
     agenda-group "global-status-limits"
+    salience 1
     when
-        $fc: FactConclusion(paperStatus == DerivedStatus.PaperStatus.PREMIUM, foldingLevel == DerivedStatus.FoldingLevel.NO_FOLDS, integrity == DerivedStatus.Integrity.INTACT, cleanliness == DerivedStatus.Cleanliness.IMMACULATE, globalStatus == null)
+        $fc: FactConclusion(paperStatus == DerivedStatus.PaperStatus.PREMIUM, foldingLevel == DerivedStatus.FoldingLevel.NO_FOLDS, integrity == DerivedStatus.Integrity.INTACT, cleanliness == DerivedStatus.Cleanliness.IMMACULATE)
     then
         modify($fc) { setGlobalStatus(DerivedStatus.GlobalStatus.COLLECTOR_GRADE) };
 end
@@ -18,8 +19,9 @@ end
 // Pravilo 2
 rule "Global Status - EXCELLENT_CONDITION (Minimal Folds)"
     agenda-group "global-status-limits"
+    salience 1
     when
-        $fc: FactConclusion(foldingLevel == DerivedStatus.FoldingLevel.MINIMAL_FOLDS, integrity == DerivedStatus.Integrity.INTACT, globalStatus == null)
+        $fc: FactConclusion(foldingLevel == DerivedStatus.FoldingLevel.MINIMAL_FOLDS, integrity == DerivedStatus.Integrity.INTACT)
     then
         modify($fc) { setGlobalStatus(DerivedStatus.GlobalStatus.EXCELLENT_CONDITION) };
 end
@@ -27,8 +29,9 @@ end
 // Pravilo 3
 rule "Global Status - EXCELLENT_CONDITION (Lightly Folded)"
     agenda-group "global-status-limits"
+    salience 1
     when
-        $fc: FactConclusion(foldingLevel == DerivedStatus.FoldingLevel.LIGHTLY_FOLDED, integrity == DerivedStatus.Integrity.INTACT, globalStatus == null)
+        $fc: FactConclusion(foldingLevel == DerivedStatus.FoldingLevel.LIGHTLY_FOLDED, integrity == DerivedStatus.Integrity.INTACT)
     then
         modify($fc) { setGlobalStatus(DerivedStatus.GlobalStatus.EXCELLENT_CONDITION) };
 end
@@ -36,8 +39,9 @@ end
 // Pravilo 4
 rule "Global Status - CIRCULATED (Strong Paper)"
     agenda-group "global-status-limits"
+    salience 2
     when
-        $fc: FactConclusion(paperStatus == DerivedStatus.PaperStatus.STRONG, globalStatus == null)
+        $fc: FactConclusion(paperStatus == DerivedStatus.PaperStatus.STRONG)
     then
         modify($fc) { setGlobalStatus(DerivedStatus.GlobalStatus.CIRCULATED) };
 end
@@ -45,8 +49,10 @@ end
 // Pravilo 5
 rule "Global Status - CIRCULATED (Heavily Folded)"
     agenda-group "global-status-limits"
+    salience 2
+    no-loop true
     when
-        $fc: FactConclusion(foldingLevel == DerivedStatus.FoldingLevel.HEAVILY_FOLDED, globalStatus == null)
+        $fc: FactConclusion(foldingLevel == DerivedStatus.FoldingLevel.HEAVILY_FOLDED, globalStatus != DerivedStatus.GlobalStatus.POOR_CONDITION)
     then
         modify($fc) { setGlobalStatus(DerivedStatus.GlobalStatus.CIRCULATED) };
 end
@@ -54,8 +60,9 @@ end
 // Pravilo 6
 rule "Global Status - POOR_CONDITION (Degraded Paper)"
     agenda-group "global-status-limits"
+    salience 3
     when
-        $fc: FactConclusion(paperStatus == DerivedStatus.PaperStatus.DEGRADED, globalStatus == null)
+        $fc: FactConclusion(paperStatus == DerivedStatus.PaperStatus.DEGRADED, globalStatus != DerivedStatus.GlobalStatus.POOR_CONDITION)
     then
         modify($fc) { setGlobalStatus(DerivedStatus.GlobalStatus.POOR_CONDITION) };
 end
@@ -63,17 +70,19 @@ end
 // Pravilo 7
 rule "Global Status - POOR_CONDITION (Contaminated)"
     agenda-group "global-status-limits"
+    salience 3
     when
-        $fc: FactConclusion(cleanliness == DerivedStatus.Cleanliness.CONTAMINATED, globalStatus == null)
+        $fc: FactConclusion(cleanliness == DerivedStatus.Cleanliness.CONTAMINATED)
     then
         modify($fc) { setGlobalStatus(DerivedStatus.GlobalStatus.POOR_CONDITION) };
 end
 
 // Pravilo 8
 rule "Grade Limit - MAX_VERY_GOOD (Moderate Damage)"
+    salience 2
     agenda-group "global-status-limits"
     when
-        $fc: FactConclusion(integrity == DerivedStatus.Integrity.MODERATE_DAMAGE, gradeLimit == null)
+        $fc: FactConclusion(integrity == DerivedStatus.Integrity.MODERATE_DAMAGE)
     then
         modify($fc) { setGradeLimit(DerivedStatus.GradeLimit.MAX_VERY_GOOD) };
 end
@@ -81,9 +90,10 @@ end
 // Pravilo 9
 rule "Grade Limit - MAX_VERY_GOOD (Rounded Corners)"
     agenda-group "global-status-limits"
+    salience 2
     when
         $b: Banknote($id: id, corners == InputFeatures.Corners.ROUNDED_OR_MISSING)
-        $fc: FactConclusion(banknoteId == $id, gradeLimit == null)
+        $fc: FactConclusion(banknoteId == $id)
     then
         modify($fc) { setGradeLimit(DerivedStatus.GradeLimit.MAX_VERY_GOOD) };
 end
@@ -91,8 +101,9 @@ end
 // Pravilo 10
 rule "Grade Limit - MAX_FAIR (Severe Damage)"
     agenda-group "global-status-limits"
+    salience 1
     when
-        $fc: FactConclusion(integrity == DerivedStatus.Integrity.SEVERE_DAMAGE, gradeLimit == null)
+        $fc: FactConclusion(integrity == DerivedStatus.Integrity.SEVERE_DAMAGE)
     then
         modify($fc) { setGradeLimit(DerivedStatus.GradeLimit.MAX_FAIR) };
 end
@@ -100,9 +111,10 @@ end
 // Pravilo 11
 rule "Grade Limit - MAX_FAIR (Damaged Paper)"
     agenda-group "global-status-limits"
+    salience 1
     when
         $b: Banknote($id: id, wear == InputFeatures.Wear.DAMAGED_PAPER)
-        $fc: FactConclusion(banknoteId == $id, gradeLimit == null)
+        $fc: FactConclusion(banknoteId == $id)
     then
         modify($fc) { setGradeLimit(DerivedStatus.GradeLimit.MAX_FAIR) };
 end
@@ -110,6 +122,7 @@ end
 // Pravilo 12
 rule "Grade Limit - MAX_VERY_FINE (Foil Broken Surface)"
     agenda-group "global-status-limits"
+    salience 3
     when
         $b: Banknote($id: id, foilFeatures == InputFeatures.FoilFeatures.DAMAGED_FOLDS_BROKEN_SURFACE)
         $fc: FactConclusion(banknoteId == $id, gradeLimit == null)
@@ -120,9 +133,10 @@ end
 // Pravilo 13
 rule "Grade Limit - MAX_VERY_FINE (Foil Significantly Damaged)"
     agenda-group "global-status-limits"
+    salience 3
     when
         $b: Banknote($id: id, foilFeatures == InputFeatures.FoilFeatures.SIGNIFICANTLY_DAMAGED)
-        $fc: FactConclusion(banknoteId == $id, gradeLimit == null)
+        $fc: FactConclusion(banknoteId == $id)
     then
         modify($fc) { setGradeLimit(DerivedStatus.GradeLimit.MAX_VERY_FINE) };
 end

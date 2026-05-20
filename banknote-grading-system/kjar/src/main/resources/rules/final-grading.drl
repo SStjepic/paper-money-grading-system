@@ -15,7 +15,7 @@ rule "Grade - Uncirculated (UNCIRCULATED)"
     when
         $b: Banknote($id: id, handling == InputFeatures.Handling.NO_HANDLING)
         $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.COLLECTOR_GRADE, physicalWear == DerivedStatus.PhysicalWear.LOW, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.UNCIRCULATED) };
 end
@@ -26,7 +26,7 @@ rule "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Handling)"
     when
         $b: Banknote($id: id, handling == InputFeatures.Handling.MINOR)
         $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.EXCELLENT_CONDITION, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.ABOUT_UNCIRCULATED) };
 end
@@ -37,7 +37,7 @@ rule "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Minimal Folds)"
     when
         $b: Banknote($id: id)
         $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.EXCELLENT_CONDITION, foldingLevel == DerivedStatus.FoldingLevel.MINIMAL_FOLDS, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.ABOUT_UNCIRCULATED) };
 end
@@ -48,7 +48,7 @@ rule "Grade - Extremely Fine (EXTREMELY_FINE)"
     when
         $b: Banknote($id: id)
         $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.EXCELLENT_CONDITION, foldingLevel == DerivedStatus.FoldingLevel.LIGHTLY_FOLDED, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.EXTREMELY_FINE) };
 end
@@ -59,7 +59,7 @@ rule "Grade - Very Fine (VERY_FINE)"
     when
         $b: Banknote($id: id, corners == InputFeatures.Corners.WORN_BUT_NOT_ROUNDED)
         $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.CIRCULATED, paperStatus == DerivedStatus.PaperStatus.STRONG, cleanliness == DerivedStatus.Cleanliness.LIGHTLY_SOILED, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.VERY_FINE) };
 end
@@ -70,7 +70,7 @@ rule "Grade - Fine (FINE)"
     when
         $b: Banknote($id: id)
         $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.CIRCULATED, paperStatus == DerivedStatus.PaperStatus.SOFTENED, integrity == DerivedStatus.Integrity.MINOR_DAMAGE)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.FINE) };
 end
@@ -81,7 +81,7 @@ rule "Grade - Very Good (VERY_GOOD)"
     when
         $b: Banknote($id: id, holes == InputFeatures.Holes.CENTER_HOLE_ONLY)
         $fc: FactConclusion(banknoteId == $id, paperStatus == DerivedStatus.PaperStatus.DEGRADED, integrity == DerivedStatus.Integrity.MODERATE_DAMAGE, gradeLimit == DerivedStatus.GradeLimit.MAX_VERY_GOOD)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.VERY_GOOD) };
 end
@@ -92,7 +92,7 @@ rule "Grade - Good (GOOD)"
     when
         $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.SMALL_PIECE_MISSING, holes == InputFeatures.Holes.CENTER_AND_INTERSECTIONS)
         $fc: FactConclusion(banknoteId == $id, paperStatus == DerivedStatus.PaperStatus.DEGRADED, gradeLimit == DerivedStatus.GradeLimit.MAX_VERY_GOOD)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.GOOD) };
 end
@@ -103,7 +103,7 @@ rule "Grade - Fair (FAIR)"
     when
         $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.LARGE_PIECE_MISSING, tears == InputFeatures.Tears.LARGE_TEARS)
         $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.POOR_CONDITION)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.FAIR) };
 end
@@ -114,7 +114,7 @@ rule "Grade - Poor (POOR - Pieces)"
     when
         $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.MULTIPLE_PIECES_MISSING)
         $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.POOR_CONDITION, gradeLimit == DerivedStatus.GradeLimit.MAX_FAIR)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.POOR) };
 end
@@ -125,7 +125,7 @@ rule "Grade - Poor (POOR - Holes)"
     when
         $b: Banknote($id: id, holes == InputFeatures.Holes.LARGE_HOLES)
         $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.POOR_CONDITION, gradeLimit == DerivedStatus.GradeLimit.MAX_FAIR)
-        $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+        $res: EvaluationResult(banknoteId == $id)
     then
         modify($res) { setFinalGrade(IBNSGrade.POOR) };
 end
