@@ -12,10 +12,9 @@ import com.sbnz.model.enums.IBNSGrade;
 public class EvaluationResult {
     private String banknoteId;
     private IBNSGrade finalGrade;
-    private List<Defect> accumulatedDefects;
+    private String reportSummary;
 
     public EvaluationResult(String banknoteId) {
-        this.accumulatedDefects = new ArrayList<>();
         this.banknoteId = banknoteId;
     }
 }
