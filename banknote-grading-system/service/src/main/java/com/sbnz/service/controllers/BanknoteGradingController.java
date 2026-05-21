@@ -1,0 +1,24 @@
+package com.sbnz.service.controllers;
+
+import com.sbnz.service.dtos.BanknoteGradingRequestDTO;
+import com.sbnz.service.dtos.BanknoteGradingResponseDTO;
+import com.sbnz.service.services.BanknoteGradingService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/banknote")
+@AllArgsConstructor
+public class BanknoteGradingController {
+
+    private final BanknoteGradingService banknoteGradingService;
+
+    @PostMapping("/grade")
+    public ResponseEntity<BanknoteGradingResponseDTO> evaluateBanknote(@RequestBody BanknoteGradingRequestDTO request) {
+        return ResponseEntity.ok(banknoteGradingService.evaluateBanknoteForward(request));
+    }
+}

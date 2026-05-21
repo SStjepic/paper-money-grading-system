@@ -20,7 +20,7 @@ public class ServiceApplication {
 		KieContainer kContainer = ks
 				.newKieContainer(ks.newReleaseId("com.sbnz", "kjar", "0.0.1-SNAPSHOT"));
 		KieScanner kScanner = ks.newKieScanner(kContainer);
-		kScanner.start(1000);
+		kScanner.start(10000);
 		return kContainer;
 	}
 
