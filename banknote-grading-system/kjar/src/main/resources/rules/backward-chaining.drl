@@ -1,0 +1,20 @@
+package rules;
+
+import com.sbnz.model.models.Banknote;
+import com.sbnz.model.models.FactConclusion;
+import com.sbnz.model.models.EvaluationResult;
+import com.sbnz.model.models.Fact;
+import com.sbnz.model.models.Defect;
+import com.sbnz.model.enums.InputFeatures;
+import com.sbnz.model.enums.DerivedStatus;
+import com.sbnz.model.enums.IBNSGrade;
+
+query requirementsForGoal(String $target, String $requirement, String $level, String $explanation)
+
+    Fact( goal == $target, $requirement := requirement, $level := level, $explanation := explanation )
+    or
+    (
+        Fact( goal == $target, $next : requirement )
+        and requirementsForGoal( $next, $requirement, $level, $explanation; )
+    )
+end

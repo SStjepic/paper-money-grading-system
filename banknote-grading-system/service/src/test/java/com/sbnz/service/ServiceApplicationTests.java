@@ -1,17 +1,26 @@
 package com.sbnz.service;
 
+import com.sbnz.kjar.BanknoteGradingFacts;
 import com.sbnz.model.enums.IBNSGrade;
 import com.sbnz.model.enums.InputFeatures;
 import com.sbnz.model.models.Banknote;
 import com.sbnz.model.models.EvaluationResult;
+import com.sbnz.model.models.Fact;
 import com.sbnz.model.models.FactConclusion;
 import org.junit.jupiter.api.Test;
+import org.kie.api.KieServices;
+import org.kie.api.logger.KieRuntimeLogger;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.runtime.rule.QueryResultsRow;
+import org.kie.api.runtime.rule.Variable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.event.rule.DefaultAgendaEventListener;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,11 +30,11 @@ class ServiceApplicationTests {
     @Autowired
     private KieContainer kieContainer;
 
+
     @Test
     void testUncirculatedBanknote() {
         KieSession kieSession = kieContainer.newKieSession("ksession-rules");
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
-
         Banknote banknote = new Banknote();
         banknote.setId("AA123456789");
 
@@ -578,4 +587,53 @@ class ServiceApplicationTests {
 
         kieSession.dispose();
     }
+    @Test
+    public void testBanknoteIsUncirculatedBackwardChaining() {
+        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        assertNotNull(kieSession, "KieSession uspešno kreiran.");
+
+        for(Fact fact: BanknoteGradingFacts.createGradingGoals()) {
+            kieSession.insert(fact);
+        }
+
+        List<Fact> requirements = findRequirementsForGoal(kieSession, "GRADE:POOR");
+        assertFalse(requirements.isEmpty());
+
+        for (Fact fact: requirements) {
+            System.out.println(fact.toString());
+        }
+
+        kieSession.dispose();
+    }
+
+
+
+    private List<Fact> findRequirementsForGoal(KieSession kieSession, String targetGoal) {
+        QueryResults results = kieSession.getQueryResults(
+                "requirementsForGoal",
+                targetGoal,
+                Variable.v,
+                Variable.v,
+                Variable.v);
+
+        Map<String, Fact> uniqueRequirements = new LinkedHashMap<>();
+        for (QueryResultsRow row : results) {
+            String requirement = (String) row.get("$requirement");
+            String level = (String) row.get("$level");
+            String explanation = (String) row.get("$explanation");
+            if ("L0_INPUT".equals(level)) {
+                uniqueRequirements.putIfAbsent(
+                        targetGoal + "|" + requirement + "|" + level + "|" + explanation,
+                        new Fact(targetGoal, requirement, level, explanation));
+            }
+        }
+
+        List<Fact> sortedRequirements = new ArrayList<>(uniqueRequirements.values());
+        sortedRequirements.sort(Comparator
+                .comparing(Fact::getLevel)
+                .thenComparing(Fact::getRequirement));
+
+        return sortedRequirements;
+    }
+
 }
