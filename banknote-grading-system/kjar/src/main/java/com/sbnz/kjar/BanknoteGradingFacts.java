@@ -425,37 +425,37 @@ public final class BanknoteGradingFacts {
     }
 
     private static void addFinalGradingGoals(List<Fact> goals) {
-        addAllRequiredGroup(goals, "GRADE:UNCIRCULATED", "Grade - Uncirculated (UNCIRCULATED)",
+        addAllRequiredGroup(goals, "UNCIRCULATED", "Grade - Uncirculated (UNCIRCULATED)",
                 "INPUT:Handling.NO_HANDLING", "STATUS:COLLECTOR_GRADE", "DERIVED:PhysicalWear.LOW", "LIMIT:NO_LIMIT");
 
-        addAllRequiredGroup(goals, "GRADE:ABOUT_UNCIRCULATED", "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Handling)",
+        addAllRequiredGroup(goals, "ABOUT_UNCIRCULATED", "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Handling)",
                 "INPUT:Handling.MINOR", "STATUS:EXCELLENT_CONDITION", "LIMIT:NO_LIMIT");
 
-        addAllRequiredGroup(goals, "GRADE:ABOUT_UNCIRCULATED", "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Minimal Folds)",
+        addAllRequiredGroup(goals, "ABOUT_UNCIRCULATED", "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Minimal Folds)",
                 "STATUS:EXCELLENT_CONDITION", "DERIVED:FoldingLevel.MINIMAL_FOLDS", "LIMIT:NO_LIMIT");
 
-        addAllRequiredGroup(goals, "GRADE:EXTREMELY_FINE", "Grade - Extremely Fine (EXTREMELY_FINE)",
+        addAllRequiredGroup(goals, "EXTREMELY_FINE", "Grade - Extremely Fine (EXTREMELY_FINE)",
                 "STATUS:EXCELLENT_CONDITION", "DERIVED:FoldingLevel.LIGHTLY_FOLDED", "LIMIT:NO_LIMIT");
 
-        addAllRequiredGroup(goals, "GRADE:VERY_FINE", "Grade - Very Fine (VERY_FINE)",
+        addAllRequiredGroup(goals, "VERY_FINE", "Grade - Very Fine (VERY_FINE)",
                 "INPUT:Corners.WORN_BUT_NOT_ROUNDED", "STATUS:CIRCULATED", "DERIVED:PaperStatus.STRONG", "DERIVED:Cleanliness.LIGHTLY_SOILED", "LIMIT:NO_LIMIT");
 
-        addAllRequiredGroup(goals, "GRADE:FINE", "Grade - Fine (FINE)",
+        addAllRequiredGroup(goals, "FINE", "Grade - Fine (FINE)",
                 "STATUS:CIRCULATED", "DERIVED:PaperStatus.SOFTENED", "DERIVED:Integrity.MINOR_DAMAGE");
 
-        addAllRequiredGroup(goals, "GRADE:VERY_GOOD", "Grade - Very Good (VERY_GOOD)",
+        addAllRequiredGroup(goals, "VERY_GOOD", "Grade - Very Good (VERY_GOOD)",
                 "INPUT:Holes.CENTER_HOLE_ONLY", "DERIVED:PaperStatus.DEGRADED", "DERIVED:Integrity.MODERATE_DAMAGE", "LIMIT:MAX_VERY_GOOD");
 
-        addAllRequiredGroup(goals, "GRADE:GOOD", "Grade - Good (GOOD)",
+        addAllRequiredGroup(goals, "GOOD", "Grade - Good (GOOD)",
                 "INPUT:Pieces.SMALL_PIECE_MISSING", "INPUT:Holes.CENTER_AND_INTERSECTIONS", "DERIVED:PaperStatus.DEGRADED", "LIMIT:MAX_VERY_GOOD");
 
-        addAllRequiredGroup(goals, "GRADE:FAIR", "Grade - Fair (FAIR)",
+        addAllRequiredGroup(goals, "FAIR", "Grade - Fair (FAIR)",
                 "INPUT:Pieces.LARGE_PIECE_MISSING", "INPUT:Tears.LARGE_TEARS", "STATUS:POOR_CONDITION");
 
-        addAllRequiredGroup(goals, "GRADE:POOR", "Grade - Poor (POOR - Pieces)",
+        addAllRequiredGroup(goals, "POOR", "Grade - Poor (POOR - Pieces)",
                 "INPUT:Pieces.MULTIPLE_PIECES_MISSING", "STATUS:POOR_CONDITION", "LIMIT:MAX_FAIR");
 
-        addAllRequiredGroup(goals, "GRADE:POOR", "Grade - Poor (POOR - Holes)",
+        addAllRequiredGroup(goals, "POOR", "Grade - Poor (POOR - Holes)",
                 "INPUT:Holes.LARGE_HOLES", "STATUS:POOR_CONDITION", "LIMIT:MAX_FAIR");
     }
 

@@ -573,7 +573,7 @@ class ServiceApplicationTests {
             kieSession.insert(fact);
         }
 
-        List<Fact> requirements = findRequirementsForGoal(kieSession, "GRADE:POOR");
+        List<Fact> requirements = findRequirementsForGoal(kieSession, "UNCIRCULATED");
         assertFalse(requirements.isEmpty());
 
         for (Fact fact: requirements) {
@@ -644,7 +644,7 @@ class ServiceApplicationTests {
             kieSession.insert(fact);
         }
 
-        boolean isGrade = isGradeAchievable(kieSession, "GRADE:UNCIRCULATED");
+        boolean isGrade = isGradeAchievable(kieSession, "UNCIRCULATED");
         assertTrue(isGrade);
 
         kieSession.dispose();

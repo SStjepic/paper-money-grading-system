@@ -2,6 +2,7 @@ package com.sbnz.service.controllers;
 
 import com.sbnz.service.dtos.BanknoteGradingRequestDTO;
 import com.sbnz.service.dtos.BanknoteGradingResponseDTO;
+import com.sbnz.service.dtos.GradeCheckRequestDTO;
 import com.sbnz.service.services.BanknoteGradingService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,5 +21,10 @@ public class BanknoteGradingController {
     @PostMapping("/grade")
     public ResponseEntity<BanknoteGradingResponseDTO> evaluateBanknote(@RequestBody BanknoteGradingRequestDTO request) {
         return ResponseEntity.ok(banknoteGradingService.evaluateBanknoteForward(request));
+    }
+
+    @PostMapping("/check-achievable")
+    public ResponseEntity<Boolean> evaluateBanknote(@RequestBody GradeCheckRequestDTO request) {
+        return ResponseEntity.ok(banknoteGradingService.isGradeAchievable(request));
     }
 }
