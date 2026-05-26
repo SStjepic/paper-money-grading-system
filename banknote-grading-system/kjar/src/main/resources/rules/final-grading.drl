@@ -163,39 +163,15 @@ rule "Generate Banknote Evaluation Report"
         $res: EvaluationResult($id: banknoteId, $grade: finalGrade, finalGrade != null, reportSummary == null)
         $fc: FactConclusion(banknoteId == $id)
 
-        $filteredDefects : Map() from accumulate(
-            $d: Defect(banknoteId == $id),
-            init( Map map = new HashMap(); ),
-            action( map.put($d.getAttributeName(), $d); ),
-            reverse( map.remove($d.getAttributeName()); ),
-            result( map )
-        )
+        $allDefects : List() from accumulate(
+                    $d: Defect(banknoteId == $id),
+                    init( java.util.List lista = new java.util.ArrayList(); ),
+                    action( lista.add($d); ),
+                    reverse( lista.remove($d); ),
+                    result( lista )
+                )
     then
-        Collection finalDefects = $filteredDefects.values();
-        StringBuilder reportBuilder = new StringBuilder();
+        modify($res) { setReportSummary($allDefects) };
 
-        reportBuilder.append("=== DETAILED EVALUATION REPORT FOR BANKNOTE [").append($id).append("] ===\n");
-        reportBuilder.append("Final Assigned IBNS Grade: ").append($grade).append("\n");
-        reportBuilder.append("Global Visual Status      : ").append($fc.getGlobalStatus()).append("\n");
-
-        if ($fc.getGradeLimit() != null) {
-            reportBuilder.append("Active Evaluation Limit   : ").append($fc.getGradeLimit()).append("\n");
-        }
-
-        reportBuilder.append("--------------------------------------------------\n");
-        reportBuilder.append("IBNS Grading Flow:\n");
-
-        if (finalDefects.isEmpty()) {
-            reportBuilder.append("- No specific grading reasons were tracked in memory.\n");
-        } else {
-            for (Object obj : finalDefects) {
-                Defect d = (Defect) obj;
-                reportBuilder.append(String.format("- [%s]: %s\n", d.getAttributeName(), d.getPenaltyMessage()));
-            }
-        }
-        reportBuilder.append("==================================================");
-
-        modify($res) { setReportSummary(reportBuilder.toString()) };
-
-        System.out.println(reportBuilder.toString());
+        System.out.println($allDefects.toString());
 end

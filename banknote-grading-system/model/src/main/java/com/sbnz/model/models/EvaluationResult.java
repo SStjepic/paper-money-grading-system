@@ -12,7 +12,7 @@ import com.sbnz.model.enums.IBNSGrade;
 public class EvaluationResult {
     private String banknoteId;
     private IBNSGrade finalGrade;
-    private String reportSummary;
+    private List<Defect> reportSummary;
 
     public EvaluationResult(String banknoteId) {
         this.banknoteId = banknoteId;
