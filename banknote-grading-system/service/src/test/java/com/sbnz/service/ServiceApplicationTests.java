@@ -587,7 +587,7 @@ class ServiceApplicationTests {
 
     private List<Fact> findRequirementsForGoal(KieSession kieSession, String targetGoal) {
         QueryResults results = kieSession.getQueryResults(
-                "requirementsForGoal",
+                "requirementsForBanknoteGrade",
                 targetGoal,
                 Variable.v,
                 Variable.v,
@@ -611,6 +611,56 @@ class ServiceApplicationTests {
                 .thenComparing(Fact::getRequirement));
 
         return sortedRequirements;
+    }
+
+    @Test
+    public void testIsBanknoteIsUncirculatedBC() {
+        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        assertNotNull(kieSession, "KieSession uspešno kreiran.");
+
+        Banknote banknote = new Banknote();
+        banknote.setId("AA123456789");
+
+        banknote.setPaper(InputFeatures.Paper.FIRM);
+        banknote.setColour(InputFeatures.Colour.NO_DISCOLOURATION);
+        banknote.setCorners(InputFeatures.Corners.SHARP_AND_SQUARE);
+        banknote.setSheen(InputFeatures.Sheen.ORIGINAL_SHEEN);
+        banknote.setFoilFeatures(InputFeatures.FoilFeatures.MINOR_SCRATCHES_MANUFACTURE);
+        banknote.setWrinkles(InputFeatures.Wrinkles.NO_WRINKLES);
+        banknote.setFolds(InputFeatures.Folds.NO_FOLDS);
+        banknote.setCreases(InputFeatures.Creases.NO_CREASES);
+        banknote.setHandling(InputFeatures.Handling.NO_HANDLING);
+        banknote.setWear(InputFeatures.Wear.NO_WEAR);
+        banknote.setDirt(InputFeatures.Dirt.NO_DIRT);
+        banknote.setStains(InputFeatures.Stains.NO_STAINS);
+        banknote.setRust(InputFeatures.Rust.NO_RUST);
+        banknote.setGraffiti(InputFeatures.Graffiti.NO_GRAFFITI);
+        banknote.setTears(InputFeatures.Tears.NO_TEARS);
+        banknote.setHoles(InputFeatures.Holes.NO_HOLES);
+        banknote.setPiecesMissing(InputFeatures.PiecesMissing.NO_PIECES);
+        banknote.setStaplePinHoles(InputFeatures.StaplePinHoles.NONE);
+
+        for(Fact fact: BanknoteGradingFacts.createGradingGoals(banknote)) {
+            kieSession.insert(fact);
+        }
+
+        boolean isGrade = isGradeAchievable(kieSession, "GRADE:UNCIRCULATED");
+        assertTrue(isGrade);
+
+        kieSession.dispose();
+    }
+
+    private boolean isGradeAchievable(KieSession kieSession, String targetGoal) {
+        QueryResults results = kieSession.getQueryResults("isGradeAchievable", targetGoal);
+        boolean isGrade = false;
+        if (results.size() > 0) {
+            System.out.println("REZULTAT: Novčanica MOŽE biti UNCIRCULATED! Svi bazični uslovi postoje u memoriji.");
+            isGrade = true;
+        } else {
+            System.out.println("REZULTAT: Novčanica NE MOŽE biti UNCIRCULATED. Backward chaining je udario u zid (nedostaje neki L0_INPUT).");
+        }
+
+        return isGrade;
     }
 
 }

@@ -9,12 +9,46 @@ import com.sbnz.model.enums.InputFeatures;
 import com.sbnz.model.enums.DerivedStatus;
 import com.sbnz.model.enums.IBNSGrade;
 
-query requirementsForGoal(String $target, String $requirement, String $level, String $explanation)
+query requirementsForBanknoteGrade(String $target, String $requirement, String $level, String $explanation)
 
     Fact( goal == $target, $requirement := requirement, $level := level, $explanation := explanation )
     or
     (
         Fact( goal == $target, $next : requirement )
-        and requirementsForGoal( $next, $requirement, $level, $explanation; )
+        and requirementsForBanknoteGrade( $next, $requirement, $level, $explanation; )
+    )
+end
+
+query isGradeAchievable(String $target)
+
+    Fact( goal == $target, level == "L0_INPUT" )
+    or
+    (
+        Fact( goal == $target, level == "L_AND_GROUP", $groupName : requirement )
+        and not (
+            Fact( goal == $groupName, $subCondition : requirement )
+            and not isGradeAchievable( $subCondition; )
+        )
+    )
+    or
+    (
+        eval( $target.startsWith("NOT:") )
+        and not (
+            Fact( $cleanLimit : goal, eval($target.equals("NOT:" + $cleanLimit)) )
+            and isGradeAchievable( $cleanLimit; )
+        )
+    )
+    or
+    (
+        eval( $target.equals("LIMIT:NO_LIMIT") )
+        and not isGradeAchievable( "LIMIT:MAX_VERY_GOOD"; )
+        and not isGradeAchievable( "LIMIT:MAX_FAIR"; )
+        and not isGradeAchievable( "LIMIT:MAX_VERY_FINE"; )
+    )
+    or
+    (
+        Fact( goal == $target, level != "L0_INPUT" && level != "L_AND_GROUP", $nextSubGoal : requirement )
+        and eval( !$target.equals("LIMIT:NO_LIMIT") )
+        and isGradeAchievable( $nextSubGoal; )
     )
 end

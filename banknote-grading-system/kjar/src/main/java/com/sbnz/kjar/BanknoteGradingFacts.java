@@ -1,5 +1,6 @@
 package com.sbnz.kjar;
 
+import com.sbnz.model.models.Banknote;
 import com.sbnz.model.models.Fact;
 
 import java.util.ArrayList;
@@ -18,6 +19,289 @@ public final class BanknoteGradingFacts {
         return goals;
     }
 
+    public static List<Fact> createGradingGoals(Banknote banknote) {
+        List<Fact> goals = new ArrayList<>();
+
+        addUserInputFeatures(goals, banknote);
+        addIntermediateFacts(goals);
+        addGlobalStatusAndLimits(goals);
+        addFinalGradingGoals(goals);
+
+        return goals;
+    }
+
+    private static void addUserInputFeatures(List<Fact> goals, Banknote banknote) {
+        // 1. Paper status
+        if (banknote.getPaper() != null) {
+            switch (banknote.getPaper()) {
+                case FIRM:
+                    addGoal(goals, "INPUT:Paper.FIRM", "INPUT:paper == FIRM", "L0_INPUT", "Paper is firm.");
+                    break;
+                case CRISP:
+                    addGoal(goals, "INPUT:Paper.CRISP", "INPUT:paper == CRISP", "L0_INPUT", "Paper is crisp.");
+                    break;
+                case SOME_SOFTNESS_WRINKLED:
+                    addGoal(goals, "INPUT:Paper.SOME_SOFTNESS_WRINKLED", "INPUT:paper == SOME_SOFTNESS_WRINKLED", "L0_INPUT", "Paper has some softness/wrinkles.");
+                    break;
+                case LIMP:
+                    addGoal(goals, "INPUT:Paper.LIMP", "INPUT:paper == LIMP", "L0_INPUT", "Paper is limp.");
+                    break;
+                case TOTALLY_LIMP:
+                    addGoal(goals, "INPUT:Paper.TOTALLY_LIMP", "INPUT:paper == TOTALLY_LIMP", "L0_INPUT", "Paper is totally limp.");
+                    break;
+            }
+        }
+
+        // 2. Sheen
+        if (banknote.getSheen() != null) {
+            switch (banknote.getSheen()) {
+                case ORIGINAL_SHEEN:
+                    addGoal(goals, "INPUT:Sheen.ORIGINAL_SHEEN", "INPUT:sheen == ORIGINAL_SHEEN", "L0_INPUT", "Original natural sheen present.");
+                    break;
+                case LOST_SHEEN:
+                    addGoal(goals, "INPUT:Sheen.LOST_SHEEN", "INPUT:sheen == LOST_SHEEN", "L0_INPUT", "Original sheen is lost.");
+                    break;
+            }
+        }
+
+        // 3. Folds
+        if (banknote.getFolds() != null) {
+            switch (banknote.getFolds()) {
+                case NO_FOLDS:
+                    addGoal(goals, "INPUT:Folds.NO_FOLDS", "INPUT:folds == NO_FOLDS", "L0_INPUT", "No folds.");
+                    break;
+                case ONE_LIGHT_FOLD:
+                    addGoal(goals, "INPUT:Folds.ONE_LIGHT_FOLD", "INPUT:folds == ONE_LIGHT_FOLD", "L0_INPUT", "Exactly one light fold.");
+                    break;
+                case UP_TO_3_LIGHT_FOLDS:
+                    addGoal(goals, "INPUT:Folds.UP_TO_3_LIGHT_FOLDS", "INPUT:folds == UP_TO_3_LIGHT_FOLDS", "L0_INPUT", "Up to 3 light folds.");
+                    break;
+                case MORE_THAN_3_LIGHT_FOLDS:
+                    addGoal(goals, "INPUT:Folds.MORE_THAN_3_LIGHT_FOLDS", "INPUT:folds == MORE_THAN_3_LIGHT_FOLDS", "L0_INPUT", "More than 3 light folds.");
+                    break;
+                case MANY_FOLDS:
+                    addGoal(goals, "INPUT:Folds.MANY_FOLDS", "INPUT:folds == MANY_FOLDS", "L0_INPUT", "Many folds.");
+                    break;
+            }
+        }
+
+        // 4. Creases
+        if (banknote.getCreases() != null) {
+            switch (banknote.getCreases()) {
+                case NO_CREASES:
+                    addGoal(goals, "INPUT:Creases.NO_CREASES", "INPUT:creases == NO_CREASES", "L0_INPUT", "No creases.");
+                    break;
+                case ONE_CREASE:
+                    addGoal(goals, "INPUT:Creases.ONE_CREASE", "INPUT:creases == ONE_CREASE", "L0_INPUT", "Exactly one crease.");
+                    break;
+                case MORE_THAN_1_CREASE:
+                    addGoal(goals, "INPUT:Creases.MORE_THAN_1_CREASE", "INPUT:creases == MORE_THAN_1_CREASE", "L0_INPUT", "More than one crease.");
+                    break;
+                case MANY_CREASES:
+                    addGoal(goals, "INPUT:Creases.MANY_CREASES", "INPUT:creases == MANY_CREASES", "L0_INPUT", "Many creases.");
+                    break;
+            }
+        }
+
+        // 5. Wrinkles
+        if (banknote.getWrinkles() != null) {
+            switch (banknote.getWrinkles()) {
+                case NO_WRINKLES:
+                    addGoal(goals, "INPUT:Wrinkles.NO_WRINKLES", "INPUT:wrinkles == NO_WRINKLES", "L0_INPUT", "No wrinkles.");
+                    break;
+                case FEW_WRINKLES:
+                    addGoal(goals, "INPUT:Wrinkles.FEW_WRINKLES", "INPUT:wrinkles == FEW_WRINKLES", "L0_INPUT", "Few wrinkles.");
+                    break;
+            }
+        }
+
+        // 6. Tears
+        if (banknote.getTears() != null) {
+            switch (banknote.getTears()) {
+                case NO_TEARS:
+                    addGoal(goals, "INPUT:Tears.NO_TEARS", "INPUT:tears == NO_TEARS", "L0_INPUT", "No tears.");
+                    break;
+                case MINOR_MARGINS_ONLY:
+                    addGoal(goals, "INPUT:Tears.MINOR_MARGINS_ONLY", "INPUT:tears == MINOR_MARGINS_ONLY", "L0_INPUT", "Minor tears on margins only.");
+                    break;
+                case MINOR_INTO_DESIGN:
+                    addGoal(goals, "INPUT:Tears.MINOR_INTO_DESIGN", "INPUT:tears == MINOR_INTO_DESIGN", "L0_INPUT", "Minor tears extending into design.");
+                    break;
+                case LARGE_TEARS:
+                    addGoal(goals, "INPUT:Tears.LARGE_TEARS", "INPUT:tears == LARGE_TEARS", "L0_INPUT", "Large structural tears.");
+                    break;
+            }
+        }
+
+        // 7. Holes
+        if (banknote.getHoles() != null) {
+            switch (banknote.getHoles()) {
+                case NO_HOLES:
+                    addGoal(goals, "INPUT:Holes.NO_HOLES", "INPUT:holes == NO_HOLES", "L0_INPUT", "No holes.");
+                    break;
+                case CENTER_HOLE_ONLY:
+                    addGoal(goals, "INPUT:Holes.CENTER_HOLE_ONLY", "INPUT:holes == CENTER_HOLE_ONLY", "L0_INPUT", "Center hole only.");
+                    break;
+                case CENTER_AND_INTERSECTIONS:
+                    addGoal(goals, "INPUT:Holes.CENTER_AND_INTERSECTIONS", "INPUT:holes == CENTER_AND_INTERSECTIONS", "L0_INPUT", "Holes at center and fold intersections.");
+                    break;
+                case LARGE_HOLES:
+                    addGoal(goals, "INPUT:Holes.LARGE_HOLES", "INPUT:holes == LARGE_HOLES", "L0_INPUT", "Large destructive structural holes.");
+                    break;
+            }
+        }
+
+        // 8. Pieces Missing
+        if (banknote.getPiecesMissing() != null) {
+            switch (banknote.getPiecesMissing()) {
+                case NO_PIECES:
+                    addGoal(goals, "INPUT:Pieces.NO_PIECES", "INPUT:piecesMissing == NO_PIECES", "L0_INPUT", "No missing pieces.");
+                    break;
+                case SMALL_PIECE_MISSING:
+                    addGoal(goals, "INPUT:Pieces.SMALL_PIECE_MISSING", "INPUT:piecesMissing == SMALL_PIECE_MISSING", "L0_INPUT", "Small piece missing on margin.");
+                    break;
+                case LARGE_PIECE_MISSING:
+                    addGoal(goals, "INPUT:Pieces.LARGE_PIECE_MISSING", "INPUT:piecesMissing == LARGE_PIECE_MISSING", "L0_INPUT", "Large piece missing/half torn off.");
+                    break;
+                case MULTIPLE_PIECES_MISSING:
+                    addGoal(goals, "INPUT:Pieces.MULTIPLE_PIECES_MISSING", "INPUT:piecesMissing == MULTIPLE_PIECES_MISSING", "L0_INPUT", "Multiple large missing pieces.");
+                    break;
+            }
+        }
+
+        // 9. Staples / Pin holes
+        if (banknote.getStaplePinHoles() != null) {
+            switch (banknote.getStaplePinHoles()) {
+                case NONE:
+                    addGoal(goals, "INPUT:Staples.NONE", "INPUT:staplePinHoles == NONE", "L0_INPUT", "No staple or pin holes.");
+                    break;
+                case ONE_TWO_HOLES:
+                    addGoal(goals, "INPUT:Staples.ONE_TWO_HOLES", "INPUT:staplePinHoles == ONE_TWO_HOLES", "L0_INPUT", "One or two staple holes.");
+                    break;
+                case MULTIPLE_HOLES:
+                    addGoal(goals, "INPUT:Staples.MULTIPLE_HOLES", "INPUT:staplePinHoles == MULTIPLE_HOLES", "L0_INPUT", "Multiple staple holes.");
+                    break;
+            }
+        }
+
+        // 10. Dirt
+        if (banknote.getDirt() != null) {
+            switch (banknote.getDirt()) {
+                case NO_DIRT:
+                    addGoal(goals, "INPUT:Dirt.NO_DIRT", "INPUT:dirt == NO_DIRT", "L0_INPUT", "No dirt.");
+                    break;
+                case MINIMAL:
+                    addGoal(goals, "INPUT:Dirt.MINIMAL", "INPUT:dirt == MINIMAL", "L0_INPUT", "Minimal dirt.");
+                    break;
+                case EXCESSIVE_DIRT:
+                    addGoal(goals, "INPUT:Dirt.EXCESSIVE_DIRT", "INPUT:dirt == EXCESSIVE_DIRT", "L0_INPUT", "Excessive dirt.");
+                    break;
+            }
+        }
+
+        // 11. Stains
+        if (banknote.getStains() != null) {
+            switch (banknote.getStains()) {
+                case NO_STAINS:
+                    addGoal(goals, "INPUT:Stains.NO_STAINS", "INPUT:stains == NO_STAINS", "L0_INPUT", "No stains.");
+                    break;
+                case STAINS_PRESENT:
+                    addGoal(goals, "INPUT:Stains.STAINS_PRESENT", "INPUT:stains == STAINS_PRESENT", "L0_INPUT", "Stains present.");
+                    break;
+            }
+        }
+
+        // 12. Graffiti
+        if (banknote.getGraffiti() != null) {
+            switch (banknote.getGraffiti()) {
+                case NO_GRAFFITI:
+                    addGoal(goals, "INPUT:Graffiti.NO_GRAFFITI", "INPUT:graffiti == NO_GRAFFITI", "L0_INPUT", "No graffiti.");
+                    break;
+                case GRAFFITI_PRESENT:
+                    addGoal(goals, "INPUT:Graffiti.GRAFFITI_PRESENT", "INPUT:graffiti == GRAFFITI_PRESENT", "L0_INPUT", "Graffiti present.");
+                    break;
+            }
+        }
+
+        // 13. Rust
+        if (banknote.getRust() != null) {
+            switch (banknote.getRust()) {
+                case NO_RUST:
+                    addGoal(goals, "INPUT:Rust.NO_RUST", "INPUT:rust == NO_RUST", "L0_INPUT", "No rust.");
+                    break;
+                case RUST_PRESENT:
+                    addGoal(goals, "INPUT:Rust.RUST_PRESENT", "INPUT:rust == RUST_PRESENT", "L0_INPUT", "Rust present.");
+                    break;
+            }
+        }
+
+        // 14. Colour
+        if (banknote.getColour() != null) {
+            switch (banknote.getColour()) {
+                case SMUDGING:
+                    addGoal(goals, "INPUT:Colour.SMUDGING", "INPUT:colour == SMUDGING", "L0_INPUT", "Color smudging present.");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // 15. Corners
+        if (banknote.getCorners() != null) {
+            switch (banknote.getCorners()) {
+                case SHARP_AND_SQUARE:
+                    addGoal(goals, "INPUT:Corners.SHARP_AND_SQUARE", "INPUT:corners == SHARP_AND_SQUARE", "L0_INPUT", "Corners are sharp and square.");
+                    break;
+                case WORN_BUT_NOT_ROUNDED:
+                    addGoal(goals, "INPUT:Corners.WORN_BUT_NOT_ROUNDED", "INPUT:corners == WORN_BUT_NOT_ROUNDED", "L0_INPUT", "Corners worn but not rounded.");
+                    break;
+                case ROUNDED_OR_MISSING:
+                    addGoal(goals, "INPUT:Corners.ROUNDED_OR_MISSING", "INPUT:corners == ROUNDED_OR_MISSING", "L0_INPUT", "Corners heavily rounded or missing.");
+                    break;
+            }
+        }
+
+        // 16. Wear
+        if (banknote.getWear() != null) {
+            switch (banknote.getWear()) {
+                case NO_WEAR:
+                    addGoal(goals, "INPUT:Wear.NO_WEAR", "INPUT:wear == NO_WEAR", "L0_INPUT", "No physical wear.");
+                    break;
+                case SHOWS_WEAR:
+                    addGoal(goals, "INPUT:Wear.SHOWS_WEAR", "INPUT:wear == SHOWS_WEAR", "L0_INPUT", "Shows general wear.");
+                    break;
+                case DAMAGED_PAPER:
+                    addGoal(goals, "INPUT:Wear.DAMAGED_PAPER", "INPUT:wear == DAMAGED_PAPER", "L0_INPUT", "Severe substrate wear (damaged paper).");
+                    break;
+            }
+        }
+
+        // 17. Handling
+        if (banknote.getHandling() != null) {
+            switch (banknote.getHandling()) {
+                case NO_HANDLING:
+                    addGoal(goals, "INPUT:Handling.NO_HANDLING", "INPUT:handling == NO_HANDLING", "L0_INPUT", "Perfectly preserved, no handling signs.");
+                    break;
+                case MINOR:
+                    addGoal(goals, "INPUT:Handling.MINOR", "INPUT:handling == MINOR", "L0_INPUT", "Minor evidence of handling.");
+                    break;
+            }
+        }
+
+        // 18. Foil Features
+        if (banknote.getFoilFeatures() != null) {
+            switch (banknote.getFoilFeatures()) {
+                case DAMAGED_FOLDS_BROKEN_SURFACE:
+                    addGoal(goals, "INPUT:Foil.DAMAGED_FOLDS_BROKEN_SURFACE", "INPUT:foilFeatures == DAMAGED_FOLDS_BROKEN_SURFACE", "L0_INPUT", "Foil broken along fold lines.");
+                    break;
+                case SIGNIFICANTLY_DAMAGED:
+                    addGoal(goals, "INPUT:Foil.SIGNIFICANTLY_DAMAGED", "INPUT:foilFeatures == SIGNIFICANTLY_DAMAGED", "L0_INPUT", "Foil significantly damaged.");
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
     private static void addInputFeatures(List<Fact> goals) {
         addGoal(goals, "INPUT:Paper.FIRM", "INPUT:paper == FIRM", "L0_INPUT", "Paper is firm.");
         addGoal(goals, "INPUT:Paper.CRISP", "INPUT:paper == CRISP", "L0_INPUT", "Paper is crisp.");
