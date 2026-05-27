@@ -1,6 +1,7 @@
 package com.sbnz.service.services;
 
 import com.sbnz.kjar.BanknoteGradingFacts;
+import com.sbnz.model.enums.IBNSGrade;
 import com.sbnz.model.models.Banknote;
 import com.sbnz.model.models.EvaluationResult;
 import com.sbnz.model.models.Fact;
@@ -8,12 +9,18 @@ import com.sbnz.model.models.FactConclusion;
 import com.sbnz.service.dtos.BanknoteGradingRequestDTO;
 import com.sbnz.service.dtos.BanknoteGradingResponseDTO;
 import com.sbnz.service.dtos.GradeCheckRequestDTO;
+import com.sbnz.service.dtos.GradingRequirementDTO;
 import com.sbnz.service.mappers.BanknoteMapper;
 import lombok.AllArgsConstructor;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.runtime.rule.QueryResultsRow;
+import org.kie.api.runtime.rule.Variable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -62,7 +69,29 @@ public class BanknoteGradingService {
         if (results.size() > 0) {
             isGradeAchievable = true;
         }
+        kieSession.dispose();
 
         return isGradeAchievable;
+    }
+
+    public List<GradingRequirementDTO> getRequirementsForGrade(IBNSGrade targetGradeCode) {
+        List<GradingRequirementDTO> requirements = new ArrayList<>();
+
+        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        for(Fact fact: BanknoteGradingFacts.createGradingGoals()) {
+            kieSession.insert(fact);
+        }
+        QueryResults results = kieSession.getQueryResults("requirementsForBanknoteGrade", targetGradeCode.toString(), Variable.v, Variable.v, Variable.v);
+        for (QueryResultsRow row : results) {
+            String requirement = (String) row.get("$requirement");
+            String level = (String) row.get("$level");
+            String explanation = (String) row.get("$explanation");
+
+            requirements.add(new GradingRequirementDTO(targetGradeCode, requirement, level, explanation));
+        }
+
+        kieSession.dispose();
+
+        return requirements;
     }
 }
