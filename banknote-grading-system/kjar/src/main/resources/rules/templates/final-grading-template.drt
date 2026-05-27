@@ -1,0 +1,35 @@
+template header
+ruleName
+ruleSalience
+factConclusionConditions
+banknoteConditions
+targetGrade
+defectField
+targetGlobalStatus
+defectDescription
+
+package rules.templates;
+
+import com.sbnz.model.models.Banknote;
+import com.sbnz.model.models.FactConclusion;
+import com.sbnz.model.models.EvaluationResult;
+import com.sbnz.model.models.Defect;
+import com.sbnz.model.enums.DerivedStatus;
+import com.sbnz.model.enums.InputFeatures;
+import com.sbnz.model.enums.IBNSGrade;
+
+template "final-grading-template"
+
+rule "@{ruleName}"
+agenda-group "final-grading"
+salience @{ruleSalience}
+no-loop true
+when
+    $fc: FactConclusion($id : banknoteId, @{factConclusionConditions})
+    $b: Banknote(id == $id, @{banknoteConditions})
+    $res: EvaluationResult(banknoteId == $id, finalGrade == null)
+then
+    modify($res) { setFinalGrade(IBNSGrade.@{targetGrade}) };
+    insert(new Defect($id, "@{defectField}", "@{targetGlobalStatus}", "@{defectDescription}"));
+end
+end template

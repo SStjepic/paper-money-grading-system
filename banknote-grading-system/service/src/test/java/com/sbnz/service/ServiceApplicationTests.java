@@ -1,6 +1,7 @@
 package com.sbnz.service;
 
 import com.sbnz.kjar.BanknoteGradingFacts;
+import com.sbnz.kjar.factory.ForwardChainingKieBaseFactory;
 import com.sbnz.model.enums.IBNSGrade;
 import com.sbnz.model.enums.InputFeatures;
 import com.sbnz.model.models.Banknote;
@@ -8,6 +9,7 @@ import com.sbnz.model.models.EvaluationResult;
 import com.sbnz.model.models.Fact;
 import com.sbnz.model.models.FactConclusion;
 import org.junit.jupiter.api.Test;
+import org.kie.api.KieBase;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.QueryResults;
@@ -31,7 +33,8 @@ class ServiceApplicationTests {
 
     @Test
     void testUncirculatedBanknote() {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession kieSession = kieBase.newKieSession();
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
         Banknote banknote = new Banknote();
         banknote.setId("AA123456789");
@@ -89,7 +92,8 @@ class ServiceApplicationTests {
 
     @Test
     void testAboutUncirculatedBanknote() {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession kieSession = kieBase.newKieSession();
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
 
         Banknote banknote = new Banknote();
@@ -148,7 +152,8 @@ class ServiceApplicationTests {
 
     @Test
     void testExtremelyFineBanknote() {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession kieSession = kieBase.newKieSession();
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
 
         Banknote banknote = new Banknote();
@@ -207,7 +212,8 @@ class ServiceApplicationTests {
 
     @Test
     void testVeryFineBanknote() {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession kieSession = kieBase.newKieSession();
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
 
         Banknote banknote = new Banknote();
@@ -267,7 +273,8 @@ class ServiceApplicationTests {
 
     @Test
     void testFineBanknote() {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession kieSession = kieBase.newKieSession();
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
 
         Banknote banknote = new Banknote();
@@ -327,7 +334,8 @@ class ServiceApplicationTests {
 
     @Test
     void testVeryGoodBanknote() {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession kieSession = kieBase.newKieSession();
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
 
         Banknote banknote = new Banknote();
@@ -387,7 +395,8 @@ class ServiceApplicationTests {
 
     @Test
     void testGoodBanknote() {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession kieSession = kieBase.newKieSession();
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
 
         Banknote banknote = new Banknote();
@@ -447,7 +456,8 @@ class ServiceApplicationTests {
 
     @Test
     void testFairBanknote() {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession kieSession = kieBase.newKieSession();
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
 
         Banknote banknote = new Banknote();
@@ -507,7 +517,8 @@ class ServiceApplicationTests {
 
     @Test
     void testPoorBanknote() {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession kieSession = kieBase.newKieSession();
         assertNotNull(kieSession, "KieSession uspešno kreiran.");
 
         Banknote banknote = new Banknote();

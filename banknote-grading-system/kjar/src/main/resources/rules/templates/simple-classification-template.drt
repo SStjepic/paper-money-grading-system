@@ -1,0 +1,26 @@
+template header
+ruleName
+attributeName
+inputValue
+targetField
+setterMethod
+targetStatus
+
+package rules.templates;
+
+import com.sbnz.model.models.Banknote;
+import com.sbnz.model.models.FactConclusion;
+import com.sbnz.model.enums.InputFeatures;
+import com.sbnz.model.enums.DerivedStatus;
+
+template "simple-classification-template"
+
+rule "@{ruleName}"
+    agenda-group "intermediate-facts"
+    when
+        $b: Banknote($id: id, @{attributeName} == @{inputValue})
+        $fc: FactConclusion(banknoteId == $id, @{targetField} == null)
+    then
+        modify($fc) { @{setterMethod}(@{targetStatus}) };
+end
+end template

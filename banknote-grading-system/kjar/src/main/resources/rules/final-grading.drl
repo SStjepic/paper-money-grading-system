@@ -13,148 +13,148 @@ import java.util.Map;
 import java.util.HashMap;
 
 // Pravilo 1
-rule "Grade - Uncirculated (UNCIRCULATED)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id, handling == InputFeatures.Handling.NO_HANDLING)
-        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.COLLECTOR_GRADE, physicalWear == DerivedStatus.PhysicalWear.LOW, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.UNCIRCULATED) };
-        insert(new Defect($id, "finalGradeReason", "UNCIRCULATED_CRITERIA",
-                "The note successfully meets the UNCIRCULATED standard: it is perfectly preserved, never mishandled, with sharp/square corners and original natural sheen."));
-end
+//rule "Grade - Uncirculated (UNCIRCULATED)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id, handling == InputFeatures.Handling.NO_HANDLING)
+//        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.COLLECTOR_GRADE, physicalWear == DerivedStatus.PhysicalWear.LOW, gradeLimit == null)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.UNCIRCULATED) };
+//        insert(new Defect($id, "finalGradeReason", "UNCIRCULATED_CRITERIA",
+//                "The note successfully meets the UNCIRCULATED standard: it is perfectly preserved, never mishandled, with sharp/square corners and original natural sheen."));
+//end
 
 // Pravilo 2
-rule "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Handling)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id, handling == InputFeatures.Handling.MINOR)
-        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.EXCELLENT_CONDITION, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.ABOUT_UNCIRCULATED) };
-        insert(new Defect($id, "finalGradeReason", "AU_CRITERIA",
-            "The note qualifies as ABOUT UNCIRCULATED: it is virtually perfect but displays minor evidence of handling or minor teller flicks."));
-end
+//rule "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Handling)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id, handling == InputFeatures.Handling.MINOR)
+//        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.EXCELLENT_CONDITION, gradeLimit == null)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.ABOUT_UNCIRCULATED) };
+//        insert(new Defect($id, "finalGradeReason", "AU_CRITERIA",
+//            "The note qualifies as ABOUT UNCIRCULATED: it is virtually perfect but displays minor evidence of handling or minor teller flicks."));
+//end
 
 // Pravilo 3
-rule "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Minimal Folds)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id)
-        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.EXCELLENT_CONDITION, foldingLevel == DerivedStatus.FoldingLevel.MINIMAL_FOLDS, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.ABOUT_UNCIRCULATED) };
-        insert(new Defect($id, "finalGradeReason", "AU_CRITERIA",
-            "The note is classified as ABOUT UNCIRCULATED: it remains clean and bright with original sheen, limited strictly to one light vertical fold."));
-end
+//rule "Grade - About Uncirculated (ABOUT_UNCIRCULATED - Minimal Folds)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id)
+//        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.EXCELLENT_CONDITION, foldingLevel == DerivedStatus.FoldingLevel.MINIMAL_FOLDS, gradeLimit == null)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.ABOUT_UNCIRCULATED) };
+//        insert(new Defect($id, "finalGradeReason", "AU_CRITERIA",
+//            "The note is classified as ABOUT UNCIRCULATED: it remains clean and bright with original sheen, limited strictly to one light vertical fold."));
+//end
 
 // Pravilo 4
-rule "Grade - Extremely Fine (EXTREMELY_FINE)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id)
-        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.EXCELLENT_CONDITION, foldingLevel == DerivedStatus.FoldingLevel.LIGHTLY_FOLDED, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.EXTREMELY_FINE) };
-        insert(new Defect($id, "finalGradeReason", "EF_CRITERIA",
-            "The note achieves EXTREMELY FINE: an attractive item with light handling, presenting a maximum of three light folds or one single crease."));
-end
+//rule "Grade - Extremely Fine (EXTREMELY_FINE)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id)
+//        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.EXCELLENT_CONDITION, foldingLevel == DerivedStatus.FoldingLevel.LIGHTLY_FOLDED, gradeLimit == null)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.EXTREMELY_FINE) };
+//        insert(new Defect($id, "finalGradeReason", "EF_CRITERIA",
+//            "The note achieves EXTREMELY FINE: an attractive item with light handling, presenting a maximum of three light folds or one single crease."));
+//end
 
 // Pravilo 5
-rule "Grade - Very Fine (VERY_FINE)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id, corners == InputFeatures.Corners.WORN_BUT_NOT_ROUNDED)
-        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.CIRCULATED, paperStatus == DerivedStatus.PaperStatus.STRONG, cleanliness == DerivedStatus.Cleanliness.LIGHTLY_SOILED, gradeLimit == null)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.VERY_FINE) };
-        insert(new Defect($id, "finalGradeReason", "VF_CRITERIA",
-            "The note is graded VERY FINE: it remains attractive and relatively crisp, but exhibits clear vertical/horizontal folds, lost sheen, and slight corner wear."));
-
-end
+//rule "Grade - Very Fine (VERY_FINE)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id, corners == InputFeatures.Corners.WORN_BUT_NOT_ROUNDED)
+//        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.CIRCULATED, paperStatus == DerivedStatus.PaperStatus.STRONG, cleanliness == DerivedStatus.Cleanliness.LIGHTLY_SOILED, gradeLimit == null)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.VERY_FINE) };
+//        insert(new Defect($id, "finalGradeReason", "VF_CRITERIA",
+//            "The note is graded VERY FINE: it remains attractive and relatively crisp, but exhibits clear vertical/horizontal folds, lost sheen, and slight corner wear."));
+//
+//end
 
 // Pravilo 6
-rule "Grade - Fine (FINE)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id)
-        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.CIRCULATED, paperStatus == DerivedStatus.PaperStatus.SOFTENED, integrity == DerivedStatus.Integrity.MINOR_DAMAGE)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.FINE) };
-        insert(new Defect($id, "finalGradeReason", "FINE_CRITERIA",
-            "The note displays FINE criteria: considerable circulation with many folds/creases, some paper softness, minor edge tears (not extending into design), and up to two staple holes."));
-end
+//rule "Grade - Fine (FINE)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id)
+//        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.CIRCULATED, paperStatus == DerivedStatus.PaperStatus.SOFTENED, integrity == DerivedStatus.Integrity.MINOR_DAMAGE)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.FINE) };
+//        insert(new Defect($id, "finalGradeReason", "FINE_CRITERIA",
+//            "The note displays FINE criteria: considerable circulation with many folds/creases, some paper softness, minor edge tears (not extending into design), and up to two staple holes."));
+//end
 
 // Pravilo 7
-rule "Grade - Very Good (VERY_GOOD)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id, holes == InputFeatures.Holes.CENTER_HOLE_ONLY)
-        $fc: FactConclusion(banknoteId == $id, paperStatus == DerivedStatus.PaperStatus.DEGRADED, integrity == DerivedStatus.Integrity.MODERATE_DAMAGE, gradeLimit == DerivedStatus.GradeLimit.MAX_VERY_GOOD)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.VERY_GOOD) };
-        insert(new Defect($id, "finalGradeReason", "VG_CRITERIA",
-            "The final grade is VERY GOOD: the note is well-used and quite limp, showing worn/rounded corners, staining, and a distinctive center hole caused by excessive folding."));
-end
+//rule "Grade - Very Good (VERY_GOOD)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id, holes == InputFeatures.Holes.CENTER_HOLE_ONLY)
+//        $fc: FactConclusion(banknoteId == $id, paperStatus == DerivedStatus.PaperStatus.DEGRADED, integrity == DerivedStatus.Integrity.MODERATE_DAMAGE, gradeLimit == DerivedStatus.GradeLimit.MAX_VERY_GOOD)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.VERY_GOOD) };
+//        insert(new Defect($id, "finalGradeReason", "VG_CRITERIA",
+//            "The final grade is VERY GOOD: the note is well-used and quite limp, showing worn/rounded corners, staining, and a distinctive center hole caused by excessive folding."));
+//end
 
 // Pravilo 8
-rule "Grade - Good (GOOD)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.SMALL_PIECE_MISSING, holes == InputFeatures.Holes.CENTER_AND_INTERSECTIONS)
-        $fc: FactConclusion(banknoteId == $id, paperStatus == DerivedStatus.PaperStatus.DEGRADED, gradeLimit == DerivedStatus.GradeLimit.MAX_VERY_GOOD)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.GOOD) };
-        insert(new Defect($id, "finalGradeReason", "GOOD_CRITERIA",
-            "The final grade is GOOD: a heavily circulated note with strong multiple creases, a center hole expanding into fold intersections, and a small missing piece on the margin."));
-end
+//rule "Grade - Good (GOOD)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.SMALL_PIECE_MISSING, holes == InputFeatures.Holes.CENTER_AND_INTERSECTIONS)
+//        $fc: FactConclusion(banknoteId == $id, paperStatus == DerivedStatus.PaperStatus.DEGRADED, gradeLimit == DerivedStatus.GradeLimit.MAX_VERY_GOOD)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.GOOD) };
+//        insert(new Defect($id, "finalGradeReason", "GOOD_CRITERIA",
+//            "The final grade is GOOD: a heavily circulated note with strong multiple creases, a center hole expanding into fold intersections, and a small missing piece on the margin."));
+//end
 
 // Pravilo 9
-rule "Grade - Fair (FAIR)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.LARGE_PIECE_MISSING, tears == InputFeatures.Tears.LARGE_TEARS)
-        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.POOR_CONDITION)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.FAIR) };
-        insert(new Defect($id, "finalGradeReason", "FAIR_CRITERIA",
-            "The note is evaluated as FAIR: it is totally limp and heavily soiled, featuring large tears along the borders and large pieces completely half torn off or missing."));
-end
+//rule "Grade - Fair (FAIR)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.LARGE_PIECE_MISSING, tears == InputFeatures.Tears.LARGE_TEARS)
+//        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.POOR_CONDITION)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.FAIR) };
+//        insert(new Defect($id, "finalGradeReason", "FAIR_CRITERIA",
+//            "The note is evaluated as FAIR: it is totally limp and heavily soiled, featuring large tears along the borders and large pieces completely half torn off or missing."));
+//end
 
 // Pravilo 10
-rule "Grade - Poor (POOR - Pieces)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.MULTIPLE_PIECES_MISSING)
-        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.POOR_CONDITION, gradeLimit == DerivedStatus.GradeLimit.MAX_FAIR)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.POOR) };
-        insert(new Defect($id, "finalGradeReason", "POOR_CRITERIA",
-            "The final grade is POOR (Rag condition): severe damage from wear is present, characterized by multiple large missing pieces from the note's structural body."));
-end
+//rule "Grade - Poor (POOR - Pieces)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.MULTIPLE_PIECES_MISSING)
+//        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.POOR_CONDITION, gradeLimit == DerivedStatus.GradeLimit.MAX_FAIR)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.POOR) };
+//        insert(new Defect($id, "finalGradeReason", "POOR_CRITERIA",
+//            "The final grade is POOR (Rag condition): severe damage from wear is present, characterized by multiple large missing pieces from the note's structural body."));
+//end
 
 // Pravilo 11
-rule "Grade - Poor (POOR - Holes)"
-    agenda-group "final-grading"
-    when
-        $b: Banknote($id: id, holes == InputFeatures.Holes.LARGE_HOLES)
-        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.POOR_CONDITION, gradeLimit == DerivedStatus.GradeLimit.MAX_FAIR)
-        $res: EvaluationResult(banknoteId == $id)
-    then
-        modify($res) { setFinalGrade(IBNSGrade.POOR) };
-        insert(new Defect($id, "finalGradeReason", "POOR_CRITERIA",
-            "The final grade is POOR (Rag condition): severe damage due to prolonged circulation, showing large, destructive structural holes across the design."));
-end
+//rule "Grade - Poor (POOR - Holes)"
+//    agenda-group "final-grading"
+//    when
+//        $b: Banknote($id: id, holes == InputFeatures.Holes.LARGE_HOLES)
+//        $fc: FactConclusion(banknoteId == $id, globalStatus == DerivedStatus.GlobalStatus.POOR_CONDITION, gradeLimit == DerivedStatus.GradeLimit.MAX_FAIR)
+//        $res: EvaluationResult(banknoteId == $id)
+//    then
+//        modify($res) { setFinalGrade(IBNSGrade.POOR) };
+//        insert(new Defect($id, "finalGradeReason", "POOR_CRITERIA",
+//            "The final grade is POOR (Rag condition): severe damage due to prolonged circulation, showing large, destructive structural holes across the design."));
+//end
 
 rule "Generate Banknote Evaluation Report"
     agenda-group "final-grading"

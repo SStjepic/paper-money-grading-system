@@ -1,0 +1,31 @@
+template header
+ruleName
+ruleSalience
+conditionExpression
+targetGlobalStatus
+hasDefect
+defectField
+defectDescription
+
+package rules.templates;
+
+import com.sbnz.model.models.FactConclusion;
+import com.sbnz.model.models.Defect;
+import com.sbnz.model.enums.DerivedStatus;
+
+template "composite-status-template"
+
+rule "@{ruleName}"
+agenda-group "global-status-limits"
+salience @{ruleSalience}
+no-loop true
+when
+    $fc: FactConclusion(@{conditionExpression}, globalStatus == null)
+then
+    modify($fc) { setGlobalStatus(DerivedStatus.GlobalStatus.@{targetGlobalStatus}) };
+
+    if (@{hasDefect}) {
+        insert(new Defect($fc.getBanknoteId(), "@{defectField}", "@{targetGlobalStatus}", "@{defectDescription}"));
+    }
+end
+end template

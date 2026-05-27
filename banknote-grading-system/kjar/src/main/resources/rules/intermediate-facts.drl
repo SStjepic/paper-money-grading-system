@@ -1,0 +1,377 @@
+package rules;
+
+import com.sbnz.model.models.Banknote;
+import com.sbnz.model.models.FactConclusion;
+import com.sbnz.model.enums.InputFeatures;
+
+import com.sbnz.model.enums.DerivedStatus;
+
+// Pravilo 1
+rule "Paper Status - PREMIUM"
+    agenda-group "intermediate-facts"
+    when
+        $b: Banknote($id: id, paper == InputFeatures.Paper.FIRM, sheen == InputFeatures.Sheen.ORIGINAL_SHEEN)
+        $fc: FactConclusion(banknoteId == $id, paperStatus == null)
+    then
+        modify($fc) { setPaperStatus(DerivedStatus.PaperStatus.PREMIUM) };
+end
+
+// Pravilo 2
+rule "Paper Status - STRONG"
+    agenda-group "intermediate-facts"
+    when
+        $b: Banknote($id: id, paper == InputFeatures.Paper.CRISP, sheen == InputFeatures.Sheen.LOST_SHEEN)
+        $fc: FactConclusion(banknoteId == $id, paperStatus == null)
+    then
+        modify($fc) { setPaperStatus(DerivedStatus.PaperStatus.STRONG) };
+end
+
+// Pravilo 3
+//rule "Paper Status - SOFTENED"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, paper == InputFeatures.Paper.SOME_SOFTNESS_WRINKLED)
+//        $fc: FactConclusion(banknoteId == $id, paperStatus == null)
+//    then
+//        modify($fc) { setPaperStatus(DerivedStatus.PaperStatus.SOFTENED) };
+//end
+
+// Pravilo 4
+//rule "Paper Status - DEGRADED (Limp)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, paper == InputFeatures.Paper.LIMP)
+//        $fc: FactConclusion(banknoteId == $id, paperStatus == null)
+//    then
+//        modify($fc) { setPaperStatus(DerivedStatus.PaperStatus.DEGRADED) };
+//end
+
+// Pravilo 5
+//rule "Paper Status - DEGRADED (Totally Limp)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, paper == InputFeatures.Paper.TOTALLY_LIMP)
+//        $fc: FactConclusion(banknoteId == $id, paperStatus == null)
+//    then
+//        modify($fc) { setPaperStatus(DerivedStatus.PaperStatus.DEGRADED) };
+//end
+
+// Pravilo 6
+rule "Folding Level - NO_FOLDS"
+    agenda-group "intermediate-facts"
+    when
+        $b: Banknote($id: id, folds == InputFeatures.Folds.NO_FOLDS, creases == InputFeatures.Creases.NO_CREASES, wrinkles == InputFeatures.Wrinkles.NO_WRINKLES)
+        $fc: FactConclusion(banknoteId == $id, foldingLevel == null)
+    then
+        modify($fc) { setFoldingLevel(DerivedStatus.FoldingLevel.NO_FOLDS) };
+end
+
+// Pravilo 7
+//rule "Folding Level - MINIMAL_FOLDS (1 light fold)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, folds == InputFeatures.Folds.ONE_LIGHT_FOLD)
+//        $fc: FactConclusion(banknoteId == $id, foldingLevel == null)
+//    then
+//        modify($fc) { setFoldingLevel(DerivedStatus.FoldingLevel.MINIMAL_FOLDS) };
+//end
+
+// Pravilo 8
+//rule "Folding Level - LIGHTLY_FOLDED (Up to 3 light folds)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, folds == InputFeatures.Folds.UP_TO_3_LIGHT_FOLDS)
+//        $fc: FactConclusion(banknoteId == $id, foldingLevel == null)
+//    then
+//        modify($fc) { setFoldingLevel(DerivedStatus.FoldingLevel.LIGHTLY_FOLDED) };
+//end
+
+// Pravilo 9
+//rule "Folding Level - HEAVILY_FOLDED (More than 3 light folds)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, folds == InputFeatures.Folds.MORE_THAN_3_LIGHT_FOLDS)
+//        $fc: FactConclusion(banknoteId == $id, foldingLevel == null)
+//    then
+//        modify($fc) { setFoldingLevel(DerivedStatus.FoldingLevel.HEAVILY_FOLDED) };
+//end
+
+// Pravilo 10
+//rule "Folding Level - HEAVILY_FOLDED (Many folds)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, folds == InputFeatures.Folds.MANY_FOLDS)
+//        $fc: FactConclusion(banknoteId == $id, foldingLevel == null)
+//    then
+//        modify($fc) { setFoldingLevel(DerivedStatus.FoldingLevel.HEAVILY_FOLDED) };
+//end
+
+// Pravilo 11
+//rule "Folding Level - LIGHTLY_FOLDED (1 crease)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, creases == InputFeatures.Creases.ONE_CREASE)
+//        $fc: FactConclusion(banknoteId == $id, foldingLevel == null)
+//    then
+//        modify($fc) { setFoldingLevel(DerivedStatus.FoldingLevel.LIGHTLY_FOLDED) };
+//end
+
+// Pravilo 12
+//rule "Folding Level - HEAVILY_FOLDED (More than 1 crease)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, creases == InputFeatures.Creases.MORE_THAN_1_CREASE)
+//        $fc: FactConclusion(banknoteId == $id, foldingLevel == null)
+//    then
+//        modify($fc) { setFoldingLevel(DerivedStatus.FoldingLevel.HEAVILY_FOLDED) };
+//end
+
+// Pravilo 13
+//rule "Folding Level - HEAVILY_FOLDED (Many creases)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, creases == InputFeatures.Creases.MANY_CREASES)
+//        $fc: FactConclusion(banknoteId == $id, foldingLevel == null)
+//    then
+//        modify($fc) { setFoldingLevel(DerivedStatus.FoldingLevel.HEAVILY_FOLDED) };
+//end
+
+// Pravilo 14
+//rule "Folding Level - MINIMAL_FOLDS (Few wrinkles)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, wrinkles == InputFeatures.Wrinkles.FEW_WRINKLES)
+//        $fc: FactConclusion(banknoteId == $id, foldingLevel == null)
+//    then
+//        modify($fc) { setFoldingLevel(DerivedStatus.FoldingLevel.MINIMAL_FOLDS) };
+//end
+
+// Pravilo 15
+rule "Integrity - INTACT"
+    agenda-group "intermediate-facts"
+    when
+        $b: Banknote($id: id, tears == InputFeatures.Tears.NO_TEARS, holes == InputFeatures.Holes.NO_HOLES, piecesMissing == InputFeatures.PiecesMissing.NO_PIECES, staplePinHoles == InputFeatures.StaplePinHoles.NONE)
+        $fc: FactConclusion(banknoteId == $id, integrity == null)
+    then
+        modify($fc) { setIntegrity(DerivedStatus.Integrity.INTACT) };
+end
+
+// Pravilo 16
+//rule "Integrity - MINOR_DAMAGE (Tears)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, tears == InputFeatures.Tears.MINOR_MARGINS_ONLY)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.MINOR_DAMAGE) };
+//end
+
+// Pravilo 17
+//rule "Integrity - MINOR_DAMAGE (Staple/Pin holes)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, staplePinHoles == InputFeatures.StaplePinHoles.ONE_TWO_HOLES)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.MINOR_DAMAGE) };
+//end
+
+// Pravilo 18
+//rule "Integrity - MODERATE_DAMAGE (Tears into design)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, tears == InputFeatures.Tears.MINOR_INTO_DESIGN)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.MODERATE_DAMAGE) };
+//end
+
+// Pravilo 19
+//rule "Integrity - MODERATE_DAMAGE (Center hole)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, holes == InputFeatures.Holes.CENTER_HOLE_ONLY)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.MODERATE_DAMAGE) };
+//end
+
+// Pravilo 20
+//rule "Integrity - MODERATE_DAMAGE (Small piece missing)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.SMALL_PIECE_MISSING)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.MODERATE_DAMAGE) };
+//end
+
+// Pravilo 21
+//rule "Integrity - MODERATE_DAMAGE (Multiple staple holes)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, staplePinHoles == InputFeatures.StaplePinHoles.MULTIPLE_HOLES)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.MODERATE_DAMAGE) };
+//end
+
+// Pravilo 22
+//rule "Integrity - SEVERE_DAMAGE (Large tears)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, tears == InputFeatures.Tears.LARGE_TEARS)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.SEVERE_DAMAGE) };
+//end
+
+// Pravilo 23
+//rule "Integrity - SEVERE_DAMAGE (Large holes)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, holes == InputFeatures.Holes.LARGE_HOLES)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.SEVERE_DAMAGE) };
+//end
+
+// Pravilo 24
+//rule "Integrity - SEVERE_DAMAGE (Center and intersections)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, holes == InputFeatures.Holes.CENTER_AND_INTERSECTIONS)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.SEVERE_DAMAGE) };
+//end
+
+// Pravilo 25
+//rule "Integrity - SEVERE_DAMAGE (Large piece missing)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.LARGE_PIECE_MISSING)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.SEVERE_DAMAGE) };
+//end
+
+// Pravilo 26
+//rule "Integrity - SEVERE_DAMAGE (Multiple pieces missing)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, piecesMissing == InputFeatures.PiecesMissing.MULTIPLE_PIECES_MISSING)
+//        $fc: FactConclusion(banknoteId == $id, integrity == null)
+//    then
+//        modify($fc) { setIntegrity(DerivedStatus.Integrity.SEVERE_DAMAGE) };
+//end
+
+// Pravilo 27
+rule "Cleanliness - IMMACULATE"
+    agenda-group "intermediate-facts"
+    when
+        $b: Banknote($id: id, dirt == InputFeatures.Dirt.NO_DIRT, stains == InputFeatures.Stains.NO_STAINS, graffiti == InputFeatures.Graffiti.NO_GRAFFITI, rust == InputFeatures.Rust.NO_RUST)
+        $fc: FactConclusion(banknoteId == $id, cleanliness == null)
+    then
+        modify($fc) { setCleanliness(DerivedStatus.Cleanliness.IMMACULATE) };
+end
+
+// Pravilo 28
+//rule "Cleanliness - LIGHTLY_SOILED (Minimal dirt)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, dirt == InputFeatures.Dirt.MINIMAL)
+//        $fc: FactConclusion(banknoteId == $id, cleanliness == null)
+//    then
+//        modify($fc) { setCleanliness(DerivedStatus.Cleanliness.LIGHTLY_SOILED) };
+//end
+
+// Pravilo 29
+//rule "Cleanliness - LIGHTLY_SOILED (Smudging)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, colour == InputFeatures.Colour.SMUDGING)
+//        $fc: FactConclusion(banknoteId == $id, cleanliness == null)
+//    then
+//        modify($fc) { setCleanliness(DerivedStatus.Cleanliness.LIGHTLY_SOILED) };
+//end
+
+// Pravilo 30
+//rule "Cleanliness - CONTAMINATED (Excessive dirt)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, dirt == InputFeatures.Dirt.EXCESSIVE_DIRT)
+//        $fc: FactConclusion(banknoteId == $id, cleanliness == null)
+//    then
+//        modify($fc) { setCleanliness(DerivedStatus.Cleanliness.CONTAMINATED) };
+//end
+
+// Pravilo 31
+//rule "Cleanliness - CONTAMINATED (Stains)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, stains == InputFeatures.Stains.STAINS_PRESENT)
+//        $fc: FactConclusion(banknoteId == $id, cleanliness == null)
+//    then
+//        modify($fc) { setCleanliness(DerivedStatus.Cleanliness.CONTAMINATED) };
+//end
+
+// Pravilo 32
+//rule "Cleanliness - CONTAMINATED (Graffiti)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, graffiti == InputFeatures.Graffiti.GRAFFITI_PRESENT)
+//        $fc: FactConclusion(banknoteId == $id, cleanliness == null)
+//    then
+//        modify($fc) { setCleanliness(DerivedStatus.Cleanliness.CONTAMINATED) };
+//end
+
+// Pravilo 33
+//rule "Cleanliness - CONTAMINATED (Rust)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, rust == InputFeatures.Rust.RUST_PRESENT)
+//        $fc: FactConclusion(banknoteId == $id, cleanliness == null)
+//    then
+//        modify($fc) { setCleanliness(DerivedStatus.Cleanliness.CONTAMINATED) };
+//end
+
+// Pravilo 34
+rule "Physical Wear - LOW"
+    agenda-group "intermediate-facts"
+    when
+        $b: Banknote($id: id, corners == InputFeatures.Corners.SHARP_AND_SQUARE, wear == InputFeatures.Wear.NO_WEAR)
+        $fc: FactConclusion(banknoteId == $id, physicalWear == null)
+    then
+        modify($fc) { setPhysicalWear(DerivedStatus.PhysicalWear.LOW) };
+end
+
+// Pravilo 35
+rule "Physical Wear - MEDIUM"
+    agenda-group "intermediate-facts"
+    when
+        $b: Banknote($id: id, corners == InputFeatures.Corners.WORN_BUT_NOT_ROUNDED, wear == InputFeatures.Wear.SHOWS_WEAR)
+        $fc: FactConclusion(banknoteId == $id, physicalWear == null)
+    then
+        modify($fc) { setPhysicalWear(DerivedStatus.PhysicalWear.MEDIUM) };
+end
+
+// Pravilo 36
+//rule "Physical Wear - HIGH (Corners)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, corners == InputFeatures.Corners.ROUNDED_OR_MISSING)
+//        $fc: FactConclusion(banknoteId == $id, physicalWear == null)
+//    then
+//        modify($fc) { setPhysicalWear(DerivedStatus.PhysicalWear.HIGH) };
+//end
+
+// Pravilo 37
+//rule "Physical Wear - HIGH (Paper)"
+//    agenda-group "intermediate-facts"
+//    when
+//        $b: Banknote($id: id, wear == InputFeatures.Wear.DAMAGED_PAPER)
+//        $fc: FactConclusion(banknoteId == $id, physicalWear == null)
+//    then
+//        modify($fc) { setPhysicalWear(DerivedStatus.PhysicalWear.HIGH) };
+//end

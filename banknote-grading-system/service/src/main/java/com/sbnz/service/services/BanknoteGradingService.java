@@ -1,6 +1,7 @@
 package com.sbnz.service.services;
 
 import com.sbnz.kjar.BanknoteGradingFacts;
+import com.sbnz.kjar.factory.ForwardChainingKieBaseFactory;
 import com.sbnz.model.enums.IBNSGrade;
 import com.sbnz.model.models.Banknote;
 import com.sbnz.model.models.EvaluationResult;
@@ -12,6 +13,7 @@ import com.sbnz.service.dtos.GradeCheckRequestDTO;
 import com.sbnz.service.dtos.GradingRequirementDTO;
 import com.sbnz.service.mappers.BanknoteMapper;
 import lombok.AllArgsConstructor;
+import org.kie.api.KieBase;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.QueryResults;
@@ -30,28 +32,29 @@ public class BanknoteGradingService {
 
 
     public BanknoteGradingResponseDTO evaluateBanknoteForward(BanknoteGradingRequestDTO requestDTO) {
-        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        KieBase kieBase = ForwardChainingKieBaseFactory.createKieBase();
+        KieSession session = kieBase.newKieSession();
 
         Banknote banknote = banknoteMapper.toBanknote(requestDTO);
 
         FactConclusion conclusion = new FactConclusion(banknote.getId());
         EvaluationResult result = new EvaluationResult(banknote.getId());
 
-        kieSession.insert(banknote);
-        kieSession.insert(conclusion);
-        kieSession.insert(result);
+        session.insert(banknote);
+        session.insert(conclusion);
+        session.insert(result);
 
 
-        kieSession.getAgenda().getAgendaGroup("final-grading").setFocus();
-        kieSession.getAgenda().getAgendaGroup("global-status-limits").setFocus();
-        kieSession.getAgenda().getAgendaGroup("intermediate-facts").setFocus();
+        session.getAgenda().getAgendaGroup("final-grading").setFocus();
+        session.getAgenda().getAgendaGroup("global-status-limits").setFocus();
+        session.getAgenda().getAgendaGroup("intermediate-facts").setFocus();
 
 
-        kieSession.fireAllRules();
+        session.fireAllRules();
 
         BanknoteGradingResponseDTO responseDTO = banknoteMapper.toBanknoteGradingResponseDTO(result);
 
-        kieSession.dispose();
+        session.dispose();
 
         return responseDTO;
     }
