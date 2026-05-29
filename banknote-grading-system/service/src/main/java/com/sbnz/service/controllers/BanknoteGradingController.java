@@ -33,4 +33,9 @@ public class BanknoteGradingController {
     public ResponseEntity<List<GradingRequirementDTO>> getRequirementsForGrade(@PathVariable IBNSGrade grade) {
         return ResponseEntity.ok(banknoteGradingService.getRequirementsForGrade(grade));
     }
+
+    @PostMapping("/missing-inputs")
+    public ResponseEntity<List<String>> getMissingInputs(@RequestBody GradeCheckRequestDTO request) {
+        return ResponseEntity.ok(banknoteGradingService.findMissingInputs(request));
+    }
 }

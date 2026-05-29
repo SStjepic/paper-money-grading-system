@@ -52,3 +52,20 @@ query isGradeAchievable(String $target)
         and isGradeAchievable( $nextSubGoal; )
     )
 end
+
+query doesInputAffectGrade(String $targetGrade, String $inputFeature)
+    Fact( goal == $targetGrade, level != "L0_INPUT", requirement == $inputFeature )
+    or
+    (
+        Fact( goal == $targetGrade, level != "L0_INPUT", $intermediate : requirement )
+        and doesInputAffectGrade( $intermediate, $inputFeature; )
+    )
+end
+
+query findMissingInputs(String $targetGrade, String $missingInput)
+    doesInputAffectGrade($targetGrade, $missingInput;)
+
+    and eval($missingInput != null && $missingInput.startsWith("INPUT:"))
+
+    and not Fact(goal == $missingInput)
+end

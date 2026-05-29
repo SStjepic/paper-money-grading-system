@@ -19,12 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.event.rule.DefaultAgendaEventListener;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ServiceApplicationTests {
 
     @Autowired
@@ -674,4 +676,50 @@ class ServiceApplicationTests {
         return isGrade;
     }
 
+    @Test
+    public void testFindMissingInputs() {
+        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        assertNotNull(kieSession, "KieSession uspešno kreiran.");
+
+        Banknote banknote = new Banknote();
+        banknote.setId("MI123456789");
+
+        banknote.setPaper(InputFeatures.Paper.FIRM);
+        banknote.setColour(InputFeatures.Colour.NO_DISCOLOURATION);
+        banknote.setCorners(InputFeatures.Corners.SHARP_AND_SQUARE);
+        banknote.setSheen(InputFeatures.Sheen.ORIGINAL_SHEEN);
+        banknote.setFoilFeatures(InputFeatures.FoilFeatures.MINOR_SCRATCHES_MANUFACTURE);
+        banknote.setWrinkles(InputFeatures.Wrinkles.NO_WRINKLES);
+        banknote.setFolds(InputFeatures.Folds.NO_FOLDS);
+        banknote.setCreases(InputFeatures.Creases.NO_CREASES);
+        banknote.setHandling(InputFeatures.Handling.NO_HANDLING);
+        banknote.setWear(InputFeatures.Wear.SHOWS_WEAR);
+        banknote.setDirt(InputFeatures.Dirt.NO_DIRT);
+        banknote.setStains(InputFeatures.Stains.NO_STAINS);
+        banknote.setRust(InputFeatures.Rust.NO_RUST);
+        banknote.setGraffiti(InputFeatures.Graffiti.NO_GRAFFITI);
+        banknote.setTears(InputFeatures.Tears.NO_TEARS);
+        banknote.setHoles(InputFeatures.Holes.LARGE_HOLES);
+        banknote.setPiecesMissing(InputFeatures.PiecesMissing.NO_PIECES);
+        banknote.setStaplePinHoles(InputFeatures.StaplePinHoles.MULTIPLE_HOLES);
+
+        for (Fact fact : BanknoteGradingFacts.createGradingGoals(banknote)) {
+            kieSession.insert(fact);
+        }
+
+        System.out.println("Broj činjenica u sesiji: " + kieSession.getObjects().size());
+        String targetGoal = "UNCIRCULATED";
+        QueryResults results = kieSession.getQueryResults("findMissingInputs", targetGoal, Variable.v);
+
+        List<String> missingInputs = new ArrayList<>();
+        for (QueryResultsRow row : results) {
+            String missing = (String) row.get("$missingInput");
+            missingInputs.add(missing);
+            System.out.println("Nedostaje input: " + missing);
+        }
+
+        assertFalse(missingInputs.isEmpty(), "Lista ne sme biti prazna.");
+
+        kieSession.dispose();
+    }
 }

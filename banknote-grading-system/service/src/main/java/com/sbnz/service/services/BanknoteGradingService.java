@@ -97,4 +97,24 @@ public class BanknoteGradingService {
 
         return requirements;
     }
+
+    public List<String> findMissingInputs(GradeCheckRequestDTO requestDTO) {
+        Banknote banknote = banknoteMapper.toBanknote(requestDTO.getBanknote());
+        IBNSGrade targetGrade = requestDTO.getGrade();
+        KieSession kieSession = kieContainer.newKieSession("ksession-rules");
+        List<String> missingInputs = new ArrayList<>();
+
+        for (Fact fact : BanknoteGradingFacts.createGradingGoals(banknote)) {
+            kieSession.insert(fact);
+        }
+
+        QueryResults results = kieSession.getQueryResults("findMissingInputs", targetGrade.toString(), Variable.v);
+
+        for (QueryResultsRow row : results) {
+            String missingInput = (String) row.get("$missingInput");
+            missingInputs.add(missingInput);
+        }
+        kieSession.dispose();
+        return missingInputs;
+    }
 }
