@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/banknote")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class BanknoteGradingController {
 
     private final BanknoteGradingService banknoteGradingService;
