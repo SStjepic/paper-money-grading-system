@@ -22,7 +22,9 @@ import org.kie.api.runtime.rule.Variable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -102,7 +104,7 @@ public class BanknoteGradingService {
         Banknote banknote = banknoteMapper.toBanknote(requestDTO.getBanknote());
         IBNSGrade targetGrade = requestDTO.getGrade();
         KieSession kieSession = kieContainer.newKieSession("ksession-rules");
-        List<String> missingInputs = new ArrayList<>();
+        Set<String> missingInputs = new LinkedHashSet<>();
 
         for (Fact fact : BanknoteGradingFacts.createGradingGoals(banknote)) {
             kieSession.insert(fact);
@@ -115,6 +117,6 @@ public class BanknoteGradingService {
             missingInputs.add(missingInput);
         }
         kieSession.dispose();
-        return missingInputs;
+        return new ArrayList<>(missingInputs);
     }
 }
